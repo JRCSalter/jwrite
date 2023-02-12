@@ -20,6 +20,17 @@ Then run the installation script with the following command:
 This places all assets and scripts required into your home directory, but the main jwrite script will be placed in /usr/local/bin.
 
 ####################################################################################################
+# Dependencies
+####################################################################################################
+
+Jwrite replies on the following apps in order to work:
+
+* calbire - For compiling to mobi
+* texlive-full - For compiling to PDF
+
+Jwrite should work without the above apps, but you won't be able to compile to mobi or PDF.
+
+####################################################################################################
 # 1.0 - Pickwick
 ####################################################################################################
 
