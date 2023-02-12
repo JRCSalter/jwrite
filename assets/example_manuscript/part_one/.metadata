@@ -1,0 +1,9 @@
+# Title
+PART_TITLE="Gifts"
+
+# Location and the next location, as described in the main .metadata file
+LOCATION="$HOME/manuscript/part_one"
+NEXT="$HOME/manuscript/part_one/chapter_01"
+
+# As this is a part, it needs to be labelled as such
+TYPE="part"

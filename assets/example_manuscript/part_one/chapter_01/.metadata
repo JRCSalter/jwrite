@@ -1,0 +1,11 @@
+# Title.
+CHAPTER_TITLE="Sins of the Mother"
+
+# The location and next location, as described in the main metadata file.
+LOCATION="$HOME/manuscript/part_one/chapter_01"
+
+# Leave as a blank string, if this is tha final file to be compiled
+NEXT=""
+
+# As this is a chapter, it needs to be marked as such
+TYPE="chapter"

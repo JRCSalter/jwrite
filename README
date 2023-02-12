@@ -1,0 +1,109 @@
+############################################################################################################################################
+# JWRITE
+############################################################################################################################################
+
+This is a suite of scripts that aids in the writing and compiling of manuscripts for online and physical publication. Eventually I plan to
+include various writing tools, but this project began as a way to compile a set of files to various formats.
+
+####################################################################################################
+# Installation
+####################################################################################################
+
+When the jwrite directory is downloaded, make the installation script executable with th efollowing command:
+
+chmod +x install.sh
+
+Then run the installation script with the following command:
+
+./install.sh
+
+This places all assets and scripts required into your home directory, but the main jwrite script will be placed in /usr/local/bin.
+
+####################################################################################################
+# 1.0 - Pickwick
+####################################################################################################
+
+This can compile a completed manuscript to the following formats:
+
+* .epub with the --epub option (also created when using the --mobi option)
+* .mobi with the --mobi option
+* .pdf with the --pdf option
+* .txt with the --txt option
+* BBCode with the --bbcode option
+* .tex with the --tex option (also created when using the --pdf option)
+* .html with the --html option (also created when using the --epub option)
+
+You can compile to all formats with the --all option.
+
+An input must be specified, and this will be the directory where the .jrc files are stored. This cannot be more than three layers deep:
+
+-manuscript
+--part one
+---chapter one
+----file one
+
+To compile, use the --compile option.
+
+An input may be specified to describe where to get the information from. If not specified, then Jwrite will use the current directory.
+
+An output can be specified to describe where to put the final products. If not specified, the files are placed inside the input directory.
+
+You need not create the directory structure with parts, or even chapters. However, if you do, the .metadata file needs to be filled out with
+the relevant information. Furthermore, you can create a complex directory structure with parts and chapters, but only compile a portion of
+it to create a sample; just specify the appropriate directory, and jwrite will do the rest.
+
+Each directory requires a .metadata file. Currently, these are manually inputted, but will be automatic in a future update.
+
+When creating a new directory, copy the relevant file from the assets directory and fill it out as needed.
+
+##################################################
+# Examples
+##################################################
+
+Compile a part of a manuscript in .pdf, .epub, and .mobi files. Store the output in the directory my_project
+
+jwrite --input ~/manuscript/part_one --output ~/my_project --pdf --epub --mobi --compile
+
+Compile an entire manuscript in all formats, and show the output. Jwrite will search the current directory, and add all outputted files to it.
+
+jwrite -av --compile
+
+##################################################
+# Jrcode
+##################################################
+
+In order to output to all the different formats in a consitent style, JWrite uses a modified form of BBCode to indicate elements of the
+document.
+
+[em][/em]         - Emphasis
+[b][/b]           - Bold
+[u][/u]           - Underline
+[s][/s]           - Strikethrough
+[i][/i]           - Italics
+[sup][/sup]       - Superscript
+[sub][/sub]       - Subscript
+[center][/center] - Center text
+[cite][/cite]     - Cite the title of a work
+[dfn][/dfn]       - Define a term
+[el]              - Insert an ellipsis
+[a:"url"][/a]     - Add a link (replace url with the appropriate link, keeping the quotes)
+[img:"url"][/img] - Add an image (replace url with the appropriate link, keeping the quotes). Alt text can be specified between the tags.
+[ol][/ol]         - Ordered list
+[ul][/ul]         - Unordered list
+[li][/li]         - List item
+
+More tags will be added in the future, as well as the ability to provide custom tags.
+
+Jrcode also uses some LaTeX inspired conventions:
+
+`   - Single left quote
+``  - Double left quote
+'   - Single right quote or apostrophe
+''  - Double right quote
+-   - Hyphen
+--  - En dash
+--- - Em dash
+
+Jrcode automatically inserts a zero width space around any dash to ensure text can wrap properly.
+
+If you wish to nest quotes, insert a space between each quote, and this will be converted to a thin-space.

@@ -1,0 +1,287 @@
+#!/bin/bash
+
+############################################################################################################################################
+# JWRITE
+############################################################################################################################################
+
+# This script takes areguments and options, and then decides which other scripts to call.
+# A portion of this script was taken verbatim from https://stackoverflow.com/questions/192249/how-do-i-parse-command-line-arguments-in-bash
+# by Robert Siemer
+
+## Preamble ################################################################################################################################
+  # More safety, by turning some bugs into errors.
+
+  # Without `errexit` you don’t need ! and can replace
+  # ${PIPESTATUS[0]} with a simple $?, but I prefer safety.
+  set -o errexit -o pipefail -o nounset
+  
+  # -allow a command to fail with !’s side effect on errexit
+  # -use return value from ${PIPESTATUS[0]}, because ! hosed $?
+  ! getopt --test > /dev/null
+  if [[ ${PIPESTATUS[0]} -ne 4 ]]; then
+      echo 'I’m sorry, `getopt --test` failed in this environment.'
+      exit 1
+  fi
+  
+  # options
+  LONGOPTS=all,bbcode,compile,debug,epub,file:,force,help,html,input:,interactive,mobi,output:,pdf,reset,tex,txt,verbose,version
+  OPTIONS=acdfFhi:Io:vV
+  
+  # -regarding ! and PIPESTATUS see above
+  # -temporarily store output to be able to check for errors
+  # -activate quoting/enhanced mode (e.g. by writing out “--options”)
+  # -pass arguments only via   -- "$@"   to separate them correctly
+  ! PARSED=$(getopt --options=$OPTIONS --longoptions=$LONGOPTS --name "$0" -- "$@")
+  if [[ ${PIPESTATUS[0]} -ne 0 ]]; then
+      # e.g. return value is 1
+      #  then getopt has complained about wrong arguments to stdout
+      exit 2
+  fi
+  # read getopt’s output this way to handle the quoting right:
+  eval set -- "$PARSED"
+############################################################################################################################################
+
+## Set Default Variables ###################################################################################################################
+  debug=n force=n help=n interactive=n reset=n verbose=n version=n
+  
+  # The following variables are used to pass common arguments to 3rd party apps
+  d="" f="" h="" i="" q="" v=""
+  
+  all="n"
+  bbcode="n"
+  compile="n"
+  epub="n"
+  file=""
+  html="n"
+  input="."
+  mobi="n"
+  main_output="."
+  pdf="n"
+  tex="n"
+  txt="n"
+
+  title="Title"
+  part_title="Part Title"
+  chapter_title="Chapter Title"
+
+  TYPE=""
+  METADATA=""
+
+  counter=""
+  quiet=""
+  output_set=false
+############################################################################################################################################
+
+## Set Option Variables ####################################################################################################################
+  # now enjoy the options in order and nicely split until we see --
+  while true; do
+      case "$1" in
+          -a|--all)
+              bbcode="y"
+              epub="y"
+              html="y"
+              mobi="y"
+              pdf="y"
+              tex="y"
+              txt="y"
+              shift
+              ;;
+          --bbcode)
+              bbcode="y"
+              shift
+              ;;
+          -c|--compile)
+              compile="y"
+              shift
+              ;;
+          -d|--debug)
+              debug="y"
+	      d="-d"
+	      verbose="y"
+	      v="-v"
+              shift
+              ;;
+          --epub)
+	      html="y"
+              epub="y"
+              shift
+              ;;
+          -f|--file)
+              file="$2"
+              shift 2
+              ;;
+          -F|--force)
+              force="y"
+	      f="-f"
+              shift
+              ;;
+          -h|--help)
+              help="y"
+	      h="-h"
+              shift
+              ;;
+          --html)
+              html="y"
+              shift
+              ;;
+          -i|--input)
+              input="$2"
+              shift 2
+              ;;
+          -I|--interactive)
+              interactive="y"
+	      i="-i"
+              shift
+              ;;
+          --mobi)
+	      html="y"
+	      epub="y"
+              mobi="y"
+              shift
+              ;;
+          -o|--output)
+	      output_set=true
+              main_output="$2/formatted_files"
+              shift 2
+              ;;
+          --pdf)
+	      tex="y"
+              pdf="y"
+              shift
+              ;;
+          --reset)
+	      reset="y"
+              shift
+              ;;
+          --tex)
+              tex="y"
+              shift
+              ;;
+          --txt)
+              txt="y"
+              shift
+              ;;
+          -v|--verbose)
+              verbose="y"
+	      v="-v"
+              shift
+              ;;
+          -V|--version)
+              version="y"
+              shift
+              ;;
+          --)
+              shift
+              break
+              ;;
+          *)
+              echo "Programming error"
+              exit 3
+              ;;
+      esac
+  done
+# ##########################################################################################################################################
+
+## Set Other Variables #####################################################################################################################
+  # Import any config files. Uncomment for Production
+  . $HOME/.config/jwrite/jwrite.config
+
+  # For development only
+  # . assets/config/jwrite.config
+
+  # Import any scripts. Uncomment for production
+  . $HOME/.local/share/jwrite/scripts/converttobbcode.sh
+  . $HOME/.local/share/jwrite/scripts/converttohtml.sh
+  . $HOME/.local/share/jwrite/scripts/converttotex.sh
+  . $HOME/.local/share/jwrite/scripts/converttotxt.sh
+  . $HOME/.local/share/jwrite/scripts/debug.sh
+  . $HOME/.local/share/jwrite/scripts/jlog.sh
+  . $HOME/.local/share/jwrite/scripts/compiletxt.sh
+  . $HOME/.local/share/jwrite/scripts/compilehtml.sh
+  . $HOME/.local/share/jwrite/scripts/compilebbcode.sh
+  . $HOME/.local/share/jwrite/scripts/compiletex.sh
+  . $HOME/.local/share/jwrite/scripts/makefilename.sh
+  . $HOME/.local/share/jwrite/scripts/formatchapter.sh
+  . $HOME/.local/share/jwrite/scripts/insertintotemplate.sh
+  . $HOME/.local/share/jwrite/scripts/compileinput.sh
+
+  # For development only
+  # . scripts/converttobbcode.sh
+  # . scripts/converttohtml.sh
+  # . scripts/converttotex.sh
+  # . scripts/converttotxt.sh
+  # . scripts/debug.sh
+  # . scripts/jlog.sh
+  # . scripts/compiletxt.sh
+  # . scripts/compilehtml.sh
+  # . scripts/compilebbcode.sh
+  # . scripts/compiletex.sh
+  # . scripts/makefilename.sh
+  # . scripts/formatchapter.sh
+  # . scripts/insertintotemplate.sh
+  # . scripts/compileinput.sh
+
+  JLog "\n\n\n  ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////\r
+  \n\nJWRITE CALLED on `date`\n\n
+  ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////" ""
+
+  if [[ "$version" = "y"      ]]; then echo   "$VERSION";   exit;   fi
+  if [[ "$help"    = "y"      ]]; then cat    "$HELP_FILE"; exit;   fi
+  if [[ "$debug"   = "y"      ]]; then Debug; fi
+  if [[ "$verbose" = "n"      ]]; then quiet="> /dev/null"; q="-q"; fi
+  if [[ "$output_set" = false ]]; then main_output="$input/formatted_files"; fi
+
+  if [[ ! -f "$input/.metadata" ]]
+  then
+    [[ "$verbose" = "y" ]] && echo "\nCannot find .metadata file in $input. Using default settings."
+  else
+    . "$input/.metadata"
+  fi
+
+  # Need to be able to get to the top .metadata file, and if the user chooses only a portion of the project to compile, we may not have all
+  # the information to proceed.
+  # Exit if no .metadata file is found
+  if [[ "$TYPE" = "part" ]]
+  then
+    [[ -f "$input/../.metadata" ]] && . "$input/../.metadata"
+    [[ -f "$input/.metadata"    ]] && . "$input/.metadata"
+  elif [[ "$TYPE" = "chapter" ]]
+  then
+    [[ -f "$input/../../.metadata" ]] && . "$input/../../.metadata"
+    [[ -f "$input/../.metadata"    ]] && . "$input/../.metadata"
+    [[ -f "$input/.metadata"       ]] && . "$input/.metadata"
+  else
+    echo "Error. No metadata file found."
+    exit
+  fi
+
+  if [[ "$METADATA" = "" ]]; then echo "Error. Cannot find main metadata file."; exit; fi
+
+  if [[ "$file" = "" ]]
+  then
+    formatted_title=`echo "${BOOK_TITLE,,}"`
+    formatted_title=`echo "${formatted_title//[^[:alnum:]]/_}"`
+  else
+    formatted_title="$file"
+  fi
+
+  JLog "\ntitle set to: $BOOK_TITLE\r
+  file set to:  $formatted_title" ""
+
+  mkdir $v -p "$main_output"
+# ##########################################################################################################################################
+
+## Control #################################################################################################################################
+  if [[ "$compile" = "y" ]]
+  then
+    JLog "Checking to compile for .txt"   ""
+    [[ "$txt"     = "y" ]] && CompileTxt    "$input"
+    JLog "Checking to compile for .html"  ""
+    [[ "$html"    = "y" ]] && CompileHtml   "$input"
+    JLog "Checking to compile for BBCode" ""
+    [[ "$bbcode"  = "y" ]] && CompileBBCode "$input"
+    JLog "Checking to compile for .tex"   ""
+    [[ "$tex"     = "y" ]] && CompileTex    "$input"
+    [[ "$verbose" = "y" ]] && echo -e "\n\nFinished compiling\n\n"
+  fi
+# ##########################################################################################################################################

@@ -1,0 +1,26 @@
+
+-----------
+JWRITE HELP
+-----------
+
+Options:
+  -a|--all         - Compile for all formats
+     --bbcode      - Compile for BBCode
+  -c|--compile     - Compile the input
+  -d|--debug       - Display debugging information
+     --epub        - Compile for Epub
+  -f|--file        - Specify the output file name for the finished compilation
+  -F|--force       - Ignore any warnings
+  -h|--help        - Display this help screen
+     --html        - Compile for HTML
+  -i|--input       - Set the input directory
+  -I|--interactive - Require user input to proceed
+     --mobi        - Compile for Mobi
+  -o|--output      - Set the output directory
+     --pdf         - Compile for PDF
+     --reset       - Reset jwrite to defaults
+     --tex         - Compile for tex (Uses XeLaTeX by default)
+     --txt         - Compile for plain text
+  -v|--verbose     - Output compilation information to the screen
+  -V|--version     - Show version details
+

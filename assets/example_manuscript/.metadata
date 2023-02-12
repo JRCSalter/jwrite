@@ -1,0 +1,15 @@
+# The home of the main metadata file. Needs to be included in every .metadata file.
+METADATA="$HOME/manuscript/.metadata"
+
+# Information about the book
+BOOK_TITLE="My Awesome Novel"
+AUTHOR="A.N.Author"
+PUB_DATE="2023-02-07"
+LANG="en"
+
+# The location of this directory. Can include symlinks.
+LOCATION="$HOME/manuscript"
+
+# The location of the directory to be compiled after this one.
+# This allows you to reorder the document. However, the files within each directory are compiled in the order from the output of an ls command
+NEXT="$HOME/manuscript/part_one"
